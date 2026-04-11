@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Fat Loss Plan</title>
+
+<link rel="manifest" href="manifest.json">
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --card2: #222;
+    --border: #2e2e2e;
+    --accent: #f97316;
+    --accent2: #fb923c;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --text: #f5f5f5;
+    --muted: #888;
+    --treat: #f59e0b;
+    --batch: #10b981;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+  h1, h2, h3 { font-family: 'Syne', sans-serif; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 28px 16px 20px;
+  }
+  .header-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: clamp(26px, 6vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .stat-card .val {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .stat-card .lbl { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin: 20px 0 16px;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ---- MACROS SECTION ---- */
+  .macro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .macro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .macro-card.full { grid-column: 1 / -1; }
+  .macro-card .m-icon { font-size: 22px; margin-bottom: 6px; }
+  .macro-card .m-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+  }
+  .macro-card .m-val span { font-size: 14px; font-weight: 400; color: var(--muted); }
+  .macro-card .m-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .macro-card .m-note { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .protein .m-val { color: #ef4444; }
+  .carbs .m-val { color: #f59e0b; }
+  .fats .m-val { color: #3b82f6; }
+  .cals .m-val { color: var(--accent); }
+  .progress-bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; }
+
+  /* Calc card */
+  .calc-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .calc-card h3 { font-size: 14px; color: var(--accent); margin-bottom: 10px; }
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .calc-row:last-child { border-bottom: none; }
+  .calc-row .r-label { color: var(--muted); }
+  .calc-row .r-val { font-weight: 600; }
+  .calc-row .r-val.highlight { color: var(--accent); font-family: 'Syne', sans-serif; font-size: 16px; }
+
+  /* ---- MEAL PLAN SECTION ---- */
+  .day-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+    scrollbar-width: none;
+  }
+  .day-tabs::-webkit-scrollbar { display: none; }
+  .day-btn {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .day-btn.active {
+    background: var(--card2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .day-content { display: none; }
+  .day-content.active { display: block; }
+
+  .day-header {
+    background: linear-gradient(135deg, var(--card2), var(--card));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .day-header h2 { font-size: 16px; font-weight: 800; }
+  .day-header .day-total { font-size: 12px; color: var(--accent); font-weight: 600; }
+
+  .meal-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .meal-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .meal-card.breakfast::before { background: #f59e0b; }
+  .meal-card.lunch::before { background: #22c55e; }
+  .meal-card.dinner::before { background: #3b82f6; }
+  .meal-card.snack::before { background: #a855f7; }
+  .meal-card.dessert::before { background: #ec4899; }
+  .meal-card.protein::before { background: #ef4444; }
+
+  .meal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+  .meal-type {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+  }
+  .meal-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .badge.batch { background: rgba(16,185,129,0.15); color: var(--batch); border: 1px solid rgba(16,185,129,0.3); }
+  .badge.treat { background: rgba(245,158,11,0.15); color: var(--treat); border: 1px solid rgba(245,158,11,0.3); }
+
+  .meal-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+  .meal-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+
+  .macro-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+  }
+  .pill.kcal { color: var(--accent); border-color: rgba(249,115,22,0.3); }
+  .pill.p { color: #ef4444; border-color: rgba(239,68,68,0.3); }
+  .pill.c { color: #f59e0b; border-color: rgba(245,158,11,0.3); }
+  .pill.f { color: #3b82f6; border-color: rgba(59,130,246,0.3); }
+
+  /* ---- SNACKS SECTION ---- */
+  .snack-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .snack-old .s-label { font-size: 10px; color: #ef4444; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .snack-new .s-label { font-size: 10px; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .snack-old .s-name, .snack-new .s-name { font-size: 13px; font-weight: 600; }
+  .snack-new .s-kcal { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .arrow { font-size: 20px; text-align: center; color: var(--accent); }
+
+  /* ---- RULES SECTION ---- */
+  .rule-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .rule-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    opacity: 0.4;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 32px;
+  }
+  .rule-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+  .rule-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ---- TIMELINE SECTION ---- */
+  .timeline-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .timeline-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 36px;
+  }
+  .timeline-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin-top: 4px;
+    min-height: 40px;
+  }
+  .timeline-item:last-child .timeline-line { display: none; }
+  .timeline-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    flex: 1;
+    margin-bottom: 12px;
+  }
+  .timeline-card .t-period { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .timeline-card .t-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+  .timeline-card .t-body { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ---- SUPPLEMENTS SECTION ---- */
+  .supp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 8px;
+  }
+  .supp-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .supp-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .supp-dose {
+    font-size: 11px; font-weight: 600;
+    background: rgba(249,115,22,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(249,115,22,0.3);
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+  .supp-row { display: flex; gap: 8px; margin-bottom: 5px; font-size: 12px; }
+  .supp-row .sr-key { color: var(--muted); min-width: 50px; }
+  .supp-row .sr-val { color: var(--text); }
+  .supp-budget { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+  .supp-budget span { color: var(--green); font-weight: 600; }
+
+  /* Hydration */
+  .hydro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .hydro-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: #38bdf8;
+    text-align: center;
+    padding: 10px 0;
+  }
+  .hydro-big span { font-size: 18px; color: var(--muted); }
+  .hydro-tip { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .hydro-tip:last-child { border-bottom: none; }
+  .hydro-tip .ht-icon { font-size: 18px; flex-shrink: 0; }
+  .hydro-tip .ht-text { color: var(--muted); line-height: 1.5; }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+
+  .warn-box {
+    background: rgba(249,115,22,0.08);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .warn-box strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">🔥 Your Plan</div>
+  <h1>Fat Loss Blueprint</h1>
+  <p>Personalised for you · 82.25kg → Fit & Lean</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="val">2,490</div>
+    <div class="lbl">Daily kcal</div>
+  </div>
+  <div class="stat-card">
+    <div class="val">180g</div>
+    <div class="lbl">Protein</div>
+  </div>
+  <div class="stat-card">
+    <div class="val">260g</div>
+    <div class="lbl">Carbs</div>
+  </div>
+  <div class="stat-card">
+    <div class="val">70g</div>
+    <div class="lbl">Fats</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('macros')">Calories & Macros</button>
+  <button class="tab-btn" onclick="showTab('meals')">7-Day Meal Plan</button>
+  <button class="tab-btn" onclick="showTab('snacks')">Snack Swaps</button>
+  <button class="tab-btn" onclick="showTab('rules')">Your Rules</button>
+  <button class="tab-btn" onclick="showTab('timeline')">Timeline</button>
+  <button class="tab-btn" onclick="showTab('hydration')">Hydration</button>
+  <button class="tab-btn" onclick="showTab('supps')">Supplements</button>
+</div>
+
+<!-- MACROS TAB -->
+<div class="section active" id="tab-macros">
+  <div class="warn-box">
+    ⚠️ <strong>Important:</strong> Generic online calculators are notoriously inaccurate — especially for active people. These numbers are your best starting point. Reassess in 2–3 weeks based on real results.
+  </div>
+  <div class="calc-card">
+    <h3>📐 Step-by-Step Calculation</h3>
+    <div class="calc-row"><span class="r-label">Formula</span><span class="r-val">Mifflin-St Jeor (Male)</span></div>
+    <div class="calc-row"><span class="r-label">10 × 82.25kg</span><span class="r-val">= 822.5</span></div>
+    <div class="calc-row"><span class="r-label">6.25 × 172cm</span><span class="r-val">= 1,075</span></div>
+    <div class="calc-row"><span class="r-label">5 × 18 years</span><span class="r-val">= 90</span></div>
+    <div class="calc-row"><span class="r-label">BMR (822.5 + 1075 − 90 + 5)</span><span class="r-val">= 1,812 kcal</span></div>
+    <div class="calc-row"><span class="r-label">Activity Multiplier (1.65×)</span><span class="r-val">TDEE = 2,990 kcal</span></div>
+    <div class="calc-row"><span class="r-label">Fat Loss Deficit (−500 kcal)</span><span class="r-val highlight">2,490 kcal/day</span></div>
+  </div>
+  <div class="macro-grid">
+    <div class="macro-card cals full">
+      <div class="m-icon">🔥</div>
+      <div class="m-val">2,490 <span>kcal / day</span></div>
+      <div class="m-label">Daily Target</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:83%;background:var(--accent)"></div></div>
+      <div class="m-note">500 kcal below your maintenance of 2,990. Never go below 2,000 kcal — you need fuel for 6-day training and college.</div>
+    </div>
+    <div class="macro-card protein">
+      <div class="m-icon">🥩</div>
+      <div class="m-val">180g <span>/ day</span></div>
+      <div class="m-label">Protein</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:75%;background:#ef4444"></div></div>
+      <div class="m-note">~2.2g per kg. Preserves muscle while you cut. Priority #1.</div>
+    </div>
+    <div class="macro-card carbs">
+      <div class="m-icon">🍚</div>
+      <div class="m-val">260g <span>/ day</span></div>
+      <div class="m-label">Carbohydrates</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:65%;background:#f59e0b"></div></div>
+      <div class="m-note">Rice, roti, oats — NOT the enemy. Fuel your gym sessions.</div>
+    </div>
+    <div class="macro-card fats full">
+      <div class="m-icon">🥑</div>
+      <div class="m-val">70g <span>/ day</span></div>
+      <div class="m-label">Fats</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:55%;background:#3b82f6"></div></div>
+      <div class="m-note">Essential for hormone health — especially important at 18. Don't cut fats too low.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL PLAN TAB -->
+<div class="section" id="tab-meals">
+  <div class="day-tabs">
+    <button class="day-btn active" onclick="showDay(1)">Mon</button>
+    <button class="day-btn" onclick="showDay(2)">Tue</button>
+    <button class="day-btn" onclick="showDay(3)">Wed</button>
+    <button class="day-btn" onclick="showDay(4)">Thu</button>
+    <button class="day-btn" onclick="showDay(5)">Fri</button>
+    <button class="day-btn" onclick="showDay(6)">Sat</button>
+    <button class="day-btn" onclick="showDay(7)">Sun</button>
+  </div>
+
+  <!-- DAY 1 -->
+  <div class="day-content active" id="day-1">
+    <div class="day-header">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">MONDAY</div>
+        <h2>The Classic Desi Powerhouse 💪</h2>
+      </div>
+      <div class="day-total">~2,010 kcal</div>
+    </div>
+    <div class="meal-card breakfast">
+      <div class="meal-top"><div class="meal-type">🌅 Breakfast</div></div>
+      <div class="meal-name">Masala Omelette + Roti</div>
+      <div class="meal-desc">3 whole eggs + 1 egg white, onion, tomato, green chilli, 2 whole wheat rotis</div>
+      <div class="macro-pills">
+        <span class="pill kcal">420 kcal</span>
+        <span class="pill p">P: 32g</span>
+        <span class="pill c">C: 38g</span>
+        <span class="pill f">F: 14g</span>
+      </div>
+    </div>
+    <div class="meal-card lunch">
+      <div class="meal-top"><div class="meal-type">☀️ Lunch</div><div class="meal-badges"><span class="badge batch">🍱 Batch Cook</span></div></div>
+      <div class="meal-name">Rajma Chawal</div>
+      <div class="meal-desc">1.5 cups cooked rajma curry (mom's recipe!), 1.5 cups cooked rice, small salad</div>
+      <div class="macro-pills">
+        <span class="pill kcal">620 kcal</span>
+        <span class="pill p">P: 28g</span>
+        <span class="pill c">C: 95g</span>
+        <span class="pill f">F: 8g</span>
+      </div>
+    </div>
+    <div class="meal-card snack">
+      <div class="meal-top"><div class="meal-type">☕ Snack</div></div>
+      <div class="meal-name">Post-College Chai Time</div>
+      <div class="meal-desc">1 cup less-sugar chai + 2 rice cakes with peanut butter</div>
+      <div class="macro-pills">
+        <span class="pill kcal">220 kcal</span>
+        <span class="pill p">P: 7g</span>
+        <span class="pill c">C: 28g</span>
+        <span class="pill f">F: 9g</span>
+      </div>
+    </div>
+    <div class="meal-card dinner">
+      <div class="meal-top"><div class="meal-type">🌙 Dinner</div></div>
+      <div class="meal-name">Dal + 2 Rotis + Sabzi</div>
+      <div class="meal-desc">1.5 cups masoor/toor dal, 2 whole wheat rotis, any sabzi (not bhindi 😄)</div>
+      <div class="macro-pills">
+        <span class="pill kcal">480 kcal</span>
+        <span class="pill p">P: 24g</span>
+        <span class="pill c">C: 72g</span>
+        <span class="pill f">F: 8g</span>
+      </div>
+    </div>
+    <div class="meal-card protein">
+      <div class="meal-top"><div class="meal-type">💪 Protein Top-Up</div></div>
+      <div class="meal-name">Whey Protein Shake</div>
+      <div class="meal-desc">1 scoop whey protein in water or milk</div>
+      <div class="macro-pills">
+        <span class="pill kcal">120 kcal</span>
+        <span class="pill p">P: 24g</span>
+        <span class="pill c">C: 5g</span>
+        <span class="pill f">F: 2g</span>
+      </div>
+    </div>
+    <div class="meal-card dessert">
+      <div class="meal-top"><div class="meal-type">🍬 Dessert</div></div>
+      <div class="meal-name">Fruit Chaat</div>
+      <div class="meal-desc">Mixed seasonal fruit with chaat masala & lemon</div>
+      <div class="macro-pills">
+        <span class="pill kcal">150 kcal</span>
+        <span class="pill p">P: 2g</span>
+        <span class="pill c">C: 35g</span>
+        <span class="pill f">F: 0g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="day-content" id="day-2">
+    <div class="day-header">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">TUESDAY</div>
+        <h2>The Gym Beast Fuel Day 🏋️</h2>
+      </div>
+      <div class="day-total">~2,115 kcal</div>
+    </div>
+    <div class="meal-card breakfast">
+      <div class="meal-top"><div class="meal-type">🌅 Breakfast</div><div class="meal-badges"><span class="badge batch">🍱 Batch Cook</span></div></div>
+      <div class="meal-name">Besan Chilla</div>
+      <div class="meal-desc">3 large chickpea pancakes with onion, tomato, coriander + green chutney</div>
+      <div class="macro-pills">
+        <span class="pill kcal">380 kcal</span>
+        <span class="pill p">P: 22g</span>
+        <span class="pill c">C: 45g</span>
+        <span class="pill f">F: 10g</span>
+      </div>
+    </div>
+    <div class="meal-card lunch">
+      <div class="meal-top"><div class="meal-type">☀️ Lunch</div><div class="meal-badges"><span class="badge treat">🎉 Treat Meal</span></div></div>
+      <div class="meal-name">Chicken Curry + Rice</div>
+      <div class="meal-desc">150g chicken (bone-in or boneless), mom's curry, 1.5 cups rice</div>
+      <div class="macro-pills">
+        <span class="pill kcal">650 kcal</span>
+        <span class="pill p">P: 45g</span>
+        <span class="pill c">C: 72g</span>
+        <span class="pill f">F: 16g</span>
+      </div>
+    </div>
+    <div class="meal-card snack">
+      <div class="meal-top"><div class="meal-type">⚡ Pre-Gym Snack</div></div>
+      <div class="meal-name">Banana + Almonds</div>
+      <div class="meal-desc">1 banana + 10 almonds</div>
+      <div class="macro-pills">
+        <span class="pill kcal">195 kcal</span>
+        <span class="pill p">P: 4g</span>
+        <span class="pill c">C: 30g</span>
+        <span class="pill f">F: 7g</span>
+      </div>
+    </div>
+    <div class="meal-card protein">
+      <div class="meal-top"><div class="meal-type">💪 Post-Gym</div></div>
+      <div class="meal-name">Whey Protein Shake</div>
+      <div class="meal-desc">1 scoop whey + 150ml milk</div>
+      <div class="macro-pills">
+        <span class="pill kcal">200 kcal</span>
+        <span class="pill p">P: 30g</span>
+        <span class="pill c">C: 12g</span>
+        <span class="pill f">F: 4g</span>
+      </div>
+    </div>
+    <div class="meal-card dinner">
+      <div class="meal-top"><div class="meal-type">🌙 Dinner</div></div>
+      <div class="meal-name">Paneer Bhurji + 2 Rotis</div>
+      <div class="meal-desc">100g paneer scrambled with onion, tomato, spices + 2 whole wheat rotis</div>
+      <div class="macro-pills">
+        <span class="pill kcal">520 kcal</span>
+        <span class="pill p">P: 28g</span>
+        <span class="pill c">C: 48g</span>
+        <span class="pill f">F: 22g</span>
+      </div>
+    </div>
+    <div class="meal-card dessert">
+      <div class="meal-top"><div class="meal-type">🍬 Dessert</div></div>
+      <div class="meal-name">Banana + Peanut Butter</div>
+      <div class="meal-desc">1 small banana with 1 tbsp peanut butter</div>
+      <div class="macro-pills">
+        <span class="pill kcal">170 kcal</span>
+        <span class="pill p">P: 5g</span>
+        <span class="pill c">C: 22g</span>
+        <span class="pill f">F: 8g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="day-content" id="day-3">
+    <div class="day-header">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">WEDNESDAY</div>
+        <h2>Desi Meets High Protein 🌟</h2>
+      </div>
+      <div class="day-total">~1,950 kcal</div>
+    </div>
+    <div class="meal-card breakfast">
+      <div class="meal-top"><div class="meal-type">🌅 Breakfast</div></div>
+      <div class="meal-name">Greek Yogurt Parfait — Desi Twist</div>
+      <div class="meal-desc">200g hung curd, mixed fruit, 2 tbsp granola, pinch of cardamom</div>
+      <div class="macro-pills">
+        <span class="pill kcal">340 kcal</span>
+        <span class="pill p">P: 22g</span>
+        <span class="pill c">C: 42g</span>
+        <span class="pill f">F: 8g</span>
+      </div>
+    </div>
+    <div class="meal-card lunch">
+      <div class="meal-top"><div class="meal-type">☀️ Lunch</div><div class="meal-badges"><span class="badge batch">🍱 Batch Cook</span></div></div>
+      <div class="meal-name">Chole + Brown Rice</div>
+      <div class="meal-desc">1.5 cups chole (chickpea curry), 1 cup brown rice, onion salad</div>
+      <div class="macro-pills">
+        <span class="pill kcal">580 kcal</span>
+        <span class="pill p">P: 22g</span>
+        <span class="pill c">C: 90g</span>
+        <span class="pill f">F: 10g</span>
+      </div>
+    </div>
+    <div class="meal-card snack">
+      <div class="meal-top"><div class="meal-type">☕ Chai Snack</div></div>
+      <div class="meal-name">Chai + Roasted Chana</div>
+      <div class="meal-desc">1 cup chai (less sugar) + handful of roasted chana (50g)</div>
+      <div class="macro-pills">
+        <span class="pill kcal">240 kcal</span>
+        <span class="pill p">P: 12g</span>
+        <span class="pill c">C: 32g</span>
+        <span class="pill f">F: 5g</span>
+      </div>
+    </div>
+    <div class="meal-card dinner">
+      <div class="meal-top"><div class="meal-type">🌙 Dinner</div></div>
+      <div class="meal-name">Egg Curry + 2 Rotis</div>
+      <div class="meal-desc">3 boiled eggs in onion-tomato masala gravy, 2 whole wheat rotis</div>
+      <div class="macro-pills">
+        <span class="pill kcal">490 kcal</span>
+        <span class="pill p">P: 28g</span>
+        <span class="pill c">C: 48g</span>
+        <span class="pill f">F: 18g</span>
+      </div>
+    </div>
+    <div class="meal-card protein">
+      <div class="meal-top"><div class="meal-type">💪 Protein Shake</div></div>
+      <div class="meal-name">Whey in Water</div>
+      <div class="meal-desc">1 scoop whey protein in water</div>
+      <div class="macro-pills">
+        <span class="pill kcal">120 kcal</span>
+        <span class="pill p">P: 24g</span>
+        <span class="pill c">C: 5g</span>
+        <span class="pill f">F: 2g</span>
+      </div>
+    </div>
+    <div class="meal-card dessert">
+      <div class="meal-top"><div class="meal-type">🍬 Dessert</div></div>
+      <div class="meal-name">Mango Lassi (Lighter)</div>
+      <div class="meal-desc">150g curd, half small mango, little honey — no added sugar</div>
+      <div class="macro-pills">
+        <span class="pill kcal">180 kcal</span>
+        <span class="pill p">P: 8g</span>
+        <span class="pill c">C: 28g</span>
+        <span class="pill f">F: 3g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 4 -->
+  <div class="day-content" id="day-4">
+    <div class="day-header">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">THURSDAY</div>
+        <h2>Mid-Week Treat & Reset 🎉</h2>
+      </div>
+      <div class="day-total">~1,760 kcal</div>
+    </div>
+    <div class="meal-card breakfast">
+      <div class="meal-top"><div class="meal-type">🌅 Breakfast</div></div>
+      <div class="meal-name">Poha</div>
+      <div class="meal-desc">1.5 cups poha with peanuts, onion, mustard seeds, lemon</div>
+      <div class="macro-pills">
+        <span class="pill kcal">360 kcal</span>
+        <span class="pill p">P: 10g</span>
+        <span class="pill c">C: 58g</span>
+        <span class="pill f">F: 10g</span>
+      </div>
+    </div>
+    <div class="meal-card lunch">
+      <div class="meal-top"><div class="meal-type">☀️ Lunch</div><div class="meal-badges"><span class="badge treat">🎉 Treat Meal</span></div></div>
+      <div class="meal-name">Chole Bhature — Full Send</div>
+      <div class="meal-desc">2 bhature + generous chole. Yes, really. You earned it.</div>
+      <div class="macro-pills">
+        <span class="pill kcal">750 kcal</span>
+        <span class="pill p">P: 20g</span>
+        <span class="pill c">C: 95g</span>
+        <span class="pill f">F: 28g</span>
+      </div>
+    </div>
+    <div class="meal-card snack">
+      <div class="meal-top"><div class="meal-type">☕ Snack</div></div>
+      <div class="meal-name">Chai + Boiled Egg</div>
+      <div class="meal-desc">1 cup chai + 1 boiled egg</div>
+      <div class="macro-pills">
+        <span class="pill kcal">130 kcal</span>
+        <span class="pill p">P: 8g</span>
+        <span class="pill c">C: 6g</span>
+        <span class="pill f">F: 7g</span>
+      </div>
+    </div>
+    <div class="meal-card dinner">
+      <div class="meal-top"><div class="meal-type">🌙 Dinner — Light Reset</div></div>
+      <div class="meal-name">Dal Soup + 1 Roti</div>
+      <div class="meal-desc">Thin masoor dal soup, 1 roti, cucumber salad — lighter after treat lunch</div>
+      <div class="macro-pills">
+        <span class="pill kcal">320 kcal</span>
+        <span class="pill p">P: 16g</span>
+        <span class="pill c">C: 48g</span>
+        <span class="pill f">F: 5g</span>
+      </div>
+    </div>
+    <div class="meal-card protein">
+      <div class="meal-top"><div class="meal-type">💪 Protein Shake</div></div>
+      <div class="meal-name">Whey + Milk</div>
+      <div class="meal-desc">1 scoop whey in 150ml milk</div>
+      <div class="macro-pills">
+        <span class="pill kcal">200 kcal</span>
+        <span class="pill p">P: 30g</span>
+        <span class="pill c">C: 12g</span>
+        <span class="pill f">F: 4g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 5 -->
+  <div class="day-content" id="day-5">
+    <div class="day-header">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">FRIDAY</div>
+        <h2>The Comeback King 👑</h2>
+      </div>
+      <div class="day-total">~1,930 kcal</div>
+    </div>
+    <div class="meal-card breakfast">
+      <div class="meal-top"><div class="meal-type">🌅 Breakfast</div></div>
+      <div class="meal-name">Savoury Masala Oats</div>
+      <div class="meal-desc">70g oats cooked with milk, onion, tomato, green chilli, cumin</div>
+      <div class="macro-pills">
+        <span class="pill kcal">380 kcal</span>
+        <span class="pill p">P: 18g</span>
+        <span class="pill c">C: 55g</span>
+        <span class="pill f">F: 9g</span>
+      </div>
+    </div>
+    <div class="meal-card lunch">
+      <div class="meal-top"><div class="meal-type">☀️ Lunch</div><div class="meal-badges"><span class="badge batch">🍱 Batch Cook</span></div></div>
+      <div class="meal-name">Mom's Dal + Rice + Sabzi</div>
+      <div class="meal-desc">The classic. 1.5 cups dal, 1.5 cups rice, 1 sabzi</div>
+      <div class="macro-pills">
+        <span class="pill kcal">580 kcal</span>
+        <span class="pill p">P: 24g</span>
+        <span class="pill c">C: 88g</span>
+        <span class="pill f">F: 8g</span>
+      </div>
+    </div>
+    <div class="meal-card snack">
+      <div class="meal-top"><div class="meal-type">⚡ Pre-Gym Snack</div></div>
+      <div class="meal-name">Banana + Whey Shake</div>
+      <div class="meal-desc">1 banana blended or alongside whey protein shake</div>
+      <div class="macro-pills">
+        <span class="pill kcal">230 kcal</span>
+        <span class="pill p">P: 25g</span>
+        <span class="pill c">C: 30g</span>
+        <span class="pill f">F: 2g</span>
+      </div>
+    </div>
+    <div class="meal-card dinner">
+      <div class="meal-top"><div class="meal-type">🌙 Dinner</div></div>
+      <div class="meal-name">Chicken Keema + 2 Rotis</div>
+      <div class="meal-desc">150g lean chicken keema with peas (matar keema), 2 whole wheat rotis</div>
+      <div class="macro-pills">
+        <span class="pill kcal">580 kcal</span>
+        <span class="pill p">P: 42g</span>
+        <span class="pill c">C: 50g</span>
+        <span class="pill f">F: 20g</span>
+      </div>
+    </div>
+    <div class="meal-card dessert">
+      <div class="meal-top"><div class="meal-type">🍬 Dessert</div></div>
+      <div class="meal-name">Dates + Almonds</div>
+      <div class="meal-desc">3 dates + 8 almonds — sweet, satisfying, nutritious</div>
+      <div class="macro-pills">
+        <span class="pill kcal">160 kcal</span>
+        <span class="pill p">P: 3g</span>
+        <span class="pill c">C: 25g</span>
+        <span class="pill f">F: 6g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 6 -->
+  <div class="day-content" id="day-6">
+    <div class="day-header">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">SATURDAY</div>
+        <h2>Saturday Swagger 😎</h2>
+      </div>
+      <div class="day-total">~1,940 kcal</div>
+    </div>
+    <div class="meal-card breakfast">
+      <div class="meal-top"><div class="meal-type">🌅 Breakfast</div></div>
+      <div class="meal-name">Egg Paratha + Curd</div>
+      <div class="meal-desc">2 whole wheat parathas stuffed with spiced egg filling, small bowl curd</div>
+      <div class="macro-pills">
+        <span class="pill kcal">480 kcal</span>
+        <span class="pill p">P: 24g</span>
+        <span class="pill c">C: 55g</span>
+        <span class="pill f">F: 18g</span>
+      </div>
+    </div>
+    <div class="meal-card lunch">
+      <div class="meal-top"><div class="meal-type">☀️ Lunch</div><div class="meal-badges"><span class="badge batch">🍱 Batch Cook</span></div></div>
+      <div class="meal-name">Rajma Chawal (Again — You Love It!)</div>
+      <div class="meal-desc">1.5 cups rajma, 1.5 cups rice, small salad. Always a winner.</div>
+      <div class="macro-pills">
+        <span class="pill kcal">620 kcal</span>
+        <span class="pill p">P: 28g</span>
+        <span class="pill c">C: 95g</span>
+        <span class="pill f">F: 8g</span>
+      </div>
+    </div>
+    <div class="meal-card snack">
+      <div class="meal-top"><div class="meal-type">☕ Snack</div></div>
+      <div class="meal-name">Roasted Makhana + Chai</div>
+      <div class="meal-desc">40g roasted makhana (foxnuts) + 1 cup chai</div>
+      <div class="macro-pills">
+        <span class="pill kcal">190 kcal</span>
+        <span class="pill p">P: 6g</span>
+        <span class="pill c">C: 32g</span>
+        <span class="pill f">F: 4g</span>
+      </div>
+    </div>
+    <div class="meal-card dinner">
+      <div class="meal-top"><div class="meal-type">🌙 Dinner</div><div class="meal-badges"><span class="badge treat">🎉 Treat Meal</span></div></div>
+      <div class="meal-name">Homemade Butter Chicken + Rice</div>
+      <div class="meal-desc">Lighter home version — less butter/cream, still tastes amazing</div>
+      <div class="macro-pills">
+        <span class="pill kcal">650 kcal</span>
+        <span class="pill p">P: 42g</span>
+        <span class="pill c">C: 65g</span>
+        <span class="pill f">F: 20g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 7 -->
+  <div class="day-content" id="day-7">
+    <div class="day-header">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">SUNDAY</div>
+        <h2>Sunday Reset & Recharge 🌿</h2>
+      </div>
+      <div class="day-total">~1,890 kcal</div>
+    </div>
+    <div class="meal-card breakfast">
+      <div class="meal-top"><div class="meal-type">🌅 Breakfast</div></div>
+      <div class="meal-name">Dahi + Fruit + Boiled Eggs</div>
+      <div class="meal-desc">200g dahi, 1 banana, 2 boiled eggs</div>
+      <div class="macro-pills">
+        <span class="pill kcal">350 kcal</span>
+        <span class="pill p">P: 24g</span>
+        <span class="pill c">C: 30g</span>
+        <span class="pill f">F: 12g</span>
+      </div>
+    </div>
+    <div class="meal-card lunch">
+      <div class="meal-top"><div class="meal-type">☀️ Lunch</div><div class="meal-badges"><span class="badge batch">🍱 Batch Cook</span></div></div>
+      <div class="meal-name">Moong Dal Khichdi</div>
+      <div class="meal-desc">1.5 cups khichdi with a little ghee, papad, pickle</div>
+      <div class="macro-pills">
+        <span class="pill kcal">520 kcal</span>
+        <span class="pill p">P: 22g</span>
+        <span class="pill c">C: 80g</span>
+        <span class="pill f">F: 12g</span>
+      </div>
+    </div>
+    <div class="meal-card snack">
+      <div class="meal-top"><div class="meal-type">☕ Snack</div></div>
+      <div class="meal-name">Peanut Butter on Whole Wheat Toast</div>
+      <div class="meal-desc">1 tbsp peanut butter on 2 whole wheat bread slices</div>
+      <div class="macro-pills">
+        <span class="pill kcal">280 kcal</span>
+        <span class="pill p">P: 10g</span>
+        <span class="pill c">C: 32g</span>
+        <span class="pill f">F: 12g</span>
+      </div>
+    </div>
+    <div class="meal-card dinner">
+      <div class="meal-top"><div class="meal-type">🌙 Dinner</div></div>
+      <div class="meal-name">Paneer Tikka + Dal + Roti</div>
+      <div class="meal-desc">100g grilled/baked paneer tikka, 1 cup dal, 1 roti</div>
+      <div class="macro-pills">
+        <span class="pill kcal">520 kcal</span>
+        <span class="pill p">P: 32g</span>
+        <span class="pill c">C: 42g</span>
+        <span class="pill f">F: 22g</span>
+      </div>
+    </div>
+    <div class="meal-card protein">
+      <div class="meal-top"><div class="meal-type">💪 Protein Shake</div></div>
+      <div class="meal-name">Whey in Water</div>
+      <div class="meal-desc">1 scoop whey protein in water</div>
+      <div class="macro-pills">
+        <span class="pill kcal">120 kcal</span>
+        <span class="pill p">P: 24g</span>
+        <span class="pill c">C: 5g</span>
+        <span class="pill f">F: 2g</span>
+      </div>
+    </div>
+    <div class="meal-card dessert">
+      <div class="meal-top"><div class="meal-type">🍬 Dessert</div></div>
+      <div class="meal-name">Frozen Banana Ice Cream</div>
+      <div class="meal-desc">Frozen blended banana + pinch of cardamom = magic</div>
+      <div class="macro-pills">
+        <span class="pill kcal">100 kcal</span>
+        <span class="pill p">P: 1g</span>
+        <span class="pill c">C: 25g</span>
+        <span class="pill f">F: 0g</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SNACKS TAB -->
+<div class="section" id="tab-snacks">
+  <div class="section-title">Snack Swaps 🔄</div>
+  <div class="snack-row">
+    <div class="snack-old">
+      <div class="s-label">❌ Old Habit</div>
+      <div class="s-name">Chai + Parle-G Biscuits</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="snack-new">
+      <div class="s-label">✅ Smarter Swap</div>
+      <div class="s-name">Chai (less sugar) + Rice Cakes with Peanut Butter</div>
+      <div class="s-kcal">~220 kcal · Same ritual, way better macros</div>
+    </div>
+  </div>
+  <div class="snack-row">
+    <div class="snack-old">
+      <div class="s-label">❌ Old Habit</div>
+      <div class="s-name">Namkeen (Haldiram's etc.)</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="snack-new">
+      <div class="s-label">✅ Smarter Swap</div>
+      <div class="s-name">Roasted Chana (50g)</div>
+      <div class="s-kcal">~180 kcal · Same crunch + savoury hit, actually high protein</div>
+    </div>
+  </div>
+  <div class="snack-row">
+    <div class="snack-old">
+      <div class="s-label">❌ Old Habit</div>
+      <div class="s-name">Late-Night Boredom Eating</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="snack-new">
+      <div class="s-label">✅ Smarter Swap</div>
+      <div class="s-name">Warm Haldi Doodh</div>
+      <div class="s-kcal">~120 kcal · Fills you, helps sleep, zero guilt</div>
+    </div>
+  </div>
+  <div class="snack-row">
+    <div class="snack-old">
+      <div class="s-label">❌ Old Habit</div>
+      <div class="s-name">Sweet Cravings (Random)</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="snack-new">
+      <div class="s-label">✅ Smarter Swap</div>
+      <div class="s-name">2–3 Dates + Almonds</div>
+      <div class="s-kcal">~160 kcal · Sweet, satisfying, and actually nutritious</div>
+    </div>
+  </div>
+  <div class="snack-row">
+    <div class="snack-old">
+      <div class="s-label">❌ Old Habit</div>
+      <div class="s-name">Biscuits Lying Around</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="snack-new">
+      <div class="s-label">✅ Smarter Swap</div>
+      <div class="s-name">Masala Roasted Makhana (30g)</div>
+      <div class="s-kcal">~120 kcal · Light, crunchy, filling, very low calorie</div>
+    </div>
+  </div>
+</div>
+
+<!-- RULES TAB -->
+<div class="section" id="tab-rules">
+  <div class="section-title">Your 5 Personal Rules 📋</div>
+  <div class="rule-card">
+    <div class="rule-num">01</div>
+    <div>
+      <div class="rule-title">Work WITH Your Mom, Not Around Her 🏠</div>
+      <div class="rule-body">Don't try to eat differently from what she cooks — just adjust portions and add protein. Extra dal scoop, fewer rotis, more sabzi. Indian home food is already clean. You don't need "diet food."</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-num">02</div>
+    <div>
+      <div class="rule-title">Protect Your Sleep Like It's a Gym Session 😴</div>
+      <div class="rule-body">You're sleeping 5.5–6 hours. At 18, with 6-day training, that's actively fighting your fat loss. Poor sleep spikes hunger hormones and tanks recovery. Aim to be in bed by 10:30pm. This single change could speed results by 30%.</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-num">03</div>
+    <div>
+      <div class="rule-title">The Chai Habit Isn't the Enemy — The Biscuits Are ☕</div>
+      <div class="rule-body">Keep your evening chai. It's cultural, it's comforting, it's yours. Just replace what goes with it. Roasted chana, rice cakes, a boiled egg — same ritual, completely different outcome.</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-num">04</div>
+    <div>
+      <div class="rule-title">Use Your Bus Time as a Weapon 🚌</div>
+      <div class="rule-body">2 hours on a bus daily = perfect time to track your food, plan tomorrow's meals, or do a quick check-in. Most people waste this time. You can use it to stay ahead of the game.</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-num">05</div>
+    <div>
+      <div class="rule-title">Steps Before Gym Obsession 👟</div>
+      <div class="rule-body">8,000–10,000 steps daily will burn more total calories than an extra gym session for most people. Walk to the bus stop. Walk after college. It all counts and doesn't exhaust your recovery.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMELINE TAB -->
+<div class="section" id="tab-timeline">
+  <div class="section-title">Your Realistic Timeline 📅</div>
+  <div class="timeline-item">
+    <div class="timeline-left"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+    <div class="timeline-card">
+      <div class="t-period">Week 1–2</div>
+      <div class="t-title">The Quick Drop 💧</div>
+      <div class="t-body">1.5–2.5kg drop — mostly water and glycogen. Don't get too excited, this isn't all fat. But it IS progress and it will feel amazing.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-left"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+    <div class="timeline-card">
+      <div class="t-period">Week 3–4</div>
+      <div class="t-title">Real Fat Loss Begins 🔥</div>
+      <div class="t-body">0.5–0.75kg actual fat per week. Clothes feeling slightly different. Energy levels stabilising as your body adjusts.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-left"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+    <div class="timeline-card">
+      <div class="t-period">Month 2</div>
+      <div class="t-title">Noticeable Visual Change 👀</div>
+      <div class="t-body">People may start commenting. Gym performance improving. You'll see it in the mirror every morning. Keep going — this is where most people quit.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-left"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+    <div class="timeline-card">
+      <div class="t-period">Month 3</div>
+      <div class="t-title">4–6kg of Real Fat Gone 💪</div>
+      <div class="t-body">Fitting clothes noticeably better. Looking leaner and more athletic. This is the start of the real glow-up.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-left"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+    <div class="timeline-card">
+      <div class="t-period">Month 4–5</div>
+      <div class="t-title">The Glow-Up Is Real 🌟</div>
+      <div class="t-body">8–12kg of actual fat lost. You're in genuinely great shape for an 18-year-old. The goal wasn't just to be lighter — fat down + muscle up. That transformation looks far better than just "losing weight."</div>
+    </div>
+  </div>
+</div>
+
+<!-- HYDRATION TAB -->
+<div class="section" id="tab-hydration">
+  <div class="section-title">Hydration Target 💧</div>
+  <div class="hydro-card">
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:4px">DAILY TARGET</div>
+    <div class="hydro-big">3.4L <span>gym days</span></div>
+    <div style="font-size:12px;color:var(--muted);text-align:center">2.9L on rest days · (35ml × 82.25kg + 500ml exercise)</div>
+  </div>
+  <div class="hydro-card">
+    <div class="hydro-tip">
+      <div class="ht-icon">🌅</div>
+      <div class="ht-text"><strong>Start before college:</strong> Drink 500ml water before you leave the house — you'll forget once the day starts.</div>
+    </div>
+    <div class="hydro-tip">
+      <div class="ht-icon">🚌</div>
+      <div class="ht-text"><strong>Bus bottle rule:</strong> Keep a 1-litre bottle on the bus. Both journeys = 2 litres done before dinner.</div>
+    </div>
+    <div class="hydro-tip">
+      <div class="ht-icon">☕</div>
+      <div class="ht-text"><strong>Make chai count less:</strong> For every cup of chai, drink one glass of water — chai is a mild diuretic.</div>
+    </div>
+    <div class="hydro-tip">
+      <div class="ht-icon">🌙</div>
+      <div class="ht-text"><strong>Night signal:</strong> If you're snacking at night, drink 300ml water first — 70% of late-night "hunger" is actually thirst.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLEMENTS TAB -->
+<div class="section" id="tab-supps">
+  <div class="warn-box">
+    💊 <strong>Remember:</strong> Supplements are the 1% of your results. Food, training, sleep, and consistency are the 99%. Get those right first.
+  </div>
+  <div class="supp-card">
+    <div class="supp-top">
+      <div class="supp-name">🥛 Whey Protein</div>
+      <div class="supp-dose">1–2 scoops/day</div>
+    </div>
+    <div class="supp-row"><span class="sr-key">⏰ When</span><span class="sr-val">Post-workout or between meals</span></div>
+    <div class="supp-row"><span class="sr-key">💡 Why</span><span class="sr-val">Hitting 180g protein from Indian food alone is hard. Whey fills the gap efficiently.</span></div>
+    <div class="supp-budget">💰 Budget pick: <span>MuscleBlaze Biozyme or AS-IT-IS Whey</span></div>
+  </div>
+  <div class="supp-card">
+    <div class="supp-top">
+      <div class="supp-name">⚡ Creatine Monohydrate</div>
+      <div class="supp-dose">5g daily</div>
+    </div>
+    <div class="supp-row"><span class="sr-key">⏰ When</span><span class="sr-val">Any time, with water — consistency matters most</span></div>
+    <div class="supp-row"><span class="sr-key">💡 Why</span><span class="sr-val">At 18, lifting 6 days — increases strength, muscle volume and gym performance faster than almost anything. Cheap and proven.</span></div>
+    <div class="supp-budget">💰 Budget pick: <span>AS-IT-IS Creatine Monohydrate</span></div>
+  </div>
+  <div class="supp-card">
+    <div class="supp-top">
+      <div class="supp-name">☀️ Vitamin D3</div>
+      <div class="supp-dose">2,000–4,000 IU</div>
+    </div>
+    <div class="supp-row"><span class="sr-key">⏰ When</span><span class="sr-val">With a meal containing fat</span></div>
+    <div class="supp-row"><span class="sr-key">💡 Why</span><span class="sr-val">Most Indians are deficient — affects mood, sleep, immunity and hormone production. All of which directly impact fat loss.</span></div>
+    <div class="supp-budget">💰 Budget pick: <span>HealthKart Vitamin D3</span></div>
+  </div>
+  <div class="supp-card">
+    <div class="supp-top">
+      <div class="supp-name">🐟 Omega-3</div>
+      <div class="supp-dose">1–2g EPA/DHA</div>
+    </div>
+    <div class="supp-row"><span class="sr-key">⏰ When</span><span class="sr-val">With meals</span></div>
+    <div class="supp-row"><span class="sr-key">💡 Why</span><span class="sr-val">Reduces inflammation from 6-day training, supports brain health during college, improves sleep quality.</span></div>
+    <div class="supp-budget">💰 Budget pick: <span>WOW Life Science Omega-3</span></div>
+  </div>
+  <div class="supp-card">
+    <div class="supp-top">
+      <div class="supp-name">🌙 Magnesium Glycinate</div>
+      <div class="supp-dose">300–400mg</div>
+    </div>
+    <div class="supp-row"><span class="sr-key">⏰ When</span><span class="sr-val">Before bed</span></div>
+    <div class="supp-row"><span class="sr-key">💡 Why</span><span class="sr-val">You're stressed, undersleeping, and training hard. Magnesium helps sleep quality and muscle recovery. Absolute game changer for you.</span></div>
+    <div class="supp-budget">💰 Budget pick: <span>Himalayan Organics Magnesium</span></div>
+  </div>
+  <div style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:4px;">
+    🎯 <strong style="color:var(--accent)">Start simple:</strong> If budget is tight, begin with just <strong style="color:#fff">Whey + Creatine</strong>. Those two give you 80% of the supplement benefit. Add the others when you can.
+  </div>
+</div>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function showDay(n) {
+    document.querySelectorAll('.day-content').forEach(d => d.classList.remove('active'));
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('day-' + n).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
